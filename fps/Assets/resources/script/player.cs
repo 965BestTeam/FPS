@@ -7,23 +7,49 @@ public class player : MonoBehaviour
     public float speed = 5;
     public float mouseSpeed = 50;
     public float jumpForce = 10000;
-    private new Rigidbody rig;
+    private Transform playObj;
+    private Rigidbody rig;
+    private Transform head;
+
     // Start is called before the first frame update
     void Start()
     {
+        // playObj = 
         rig = GetComponent<Rigidbody>();
+        Animator ator = GetComponent<Animator>();
+        head = transform.Find("Soldier_mesh");
     }
 
     // Update is called once per frame
     void Update()
     {
-        float h = Input.GetAxis("Horizontal");//-1 ~ 1
-        float v = Input.GetAxis("Vertical");
-        // float mouse = Input.GetAxis("Mouse ScrollWheel");
-        this.transform.Translate(new Vector3(h * speed,0, v * speed) * Time.deltaTime, Space.World);
+        Vector3 angle = transform.Find("Main Camera").transform.eulerAngles;
+        angle = new Vector3(0,angle.y,0);
+        this.transform.eulerAngles = angle;
+        player_move();
         if (Input.GetButtonDown("Jump")){
             rig.AddForce(new Vector3(0f, jumpForce, 0f));
         }
-        this.transform.eulerAngles = transform.FindChild("Main Camera").transform.eulerAngles;
+        //鼠标锁定
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+    }
+    float anger(float a)	//换算
+    {
+        a = a * 2;
+        a = a*Mathf.Deg2Rad;	//这里是因为Mathf.sin(cos)是对弧度进行计算，所以要将角度转换成弧度。
+        return a;
+    }
+
+    void player_move(){
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        this.transform.Translate(new Vector3(h,0,v) * Time.deltaTime * speed,Space.Self);
     }
 }
