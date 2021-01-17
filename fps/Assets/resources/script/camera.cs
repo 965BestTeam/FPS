@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ public class camera : MonoBehaviour
     private Vector3 camAng;
     private float camHeight = 2.5f;
     void Rot_move()
-    {   
+    {
         float y = Input.GetAxis("Mouse X");
         float x = Input.GetAxis("Mouse Y");
         camAng.x -= x;
@@ -23,7 +23,7 @@ public class camera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        camTrans = Camera.main.transform;
+        camTrans = this.gameObject.transform;
         Vector3 startPos = transform.position; //位置
         camTrans.position = startPos;
         camTrans.rotation = transform.rotation;//角度
