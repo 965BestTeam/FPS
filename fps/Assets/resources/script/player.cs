@@ -65,13 +65,14 @@ public class player : MonoBehaviour
     void player_move(){
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        bool hasHorizontalInput = !Mathf.Approximately(h, 0f);
+        bool hasHorizontalInput = !Mathf.Approximately(h, 0f);  //判断是否为相近的两个数
         bool hasVerticalInput = !Mathf.Approximately(v, 0f);
         isWalking = hasHorizontalInput || hasVerticalInput;
-        if (isWalking&&gunController.Instance.isShoot)
+        if (isWalking && gunController.Instance.isShoot)
         {
             m_Animator.SetBool("isRunAnim", true);
         }
+        Debug.Log(isWalking);
         m_Animator.SetBool("isRun", isWalking);
         this.transform.Translate(new Vector3(h,0,v) * Time.deltaTime * speed,Space.Self);
     }
