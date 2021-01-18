@@ -4,28 +4,36 @@ using UnityEngine;
 
 public class player : MonoBehaviour
 {
+    public static player Instance;
     public float speed = 5;
     public float mouseSpeed = 50;
     public float jumpForce = 10000;
     private Transform playObj;
     private Rigidbody rig;
     private Transform head;
-
+    Vector3 playerEu;
+    Vector3 cameraEu;
+    public Animator m_Animator;
+    public bool isWalking;
     // Start is called before the first frame update
+    private void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
-        // playObj = 
+        
         rig = GetComponent<Rigidbody>();
-        Animator ator = GetComponent<Animator>();
         head = transform.Find("Soldier_mesh");
+        m_Animator = transform.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 angle = transform.Find("Main Camera").transform.eulerAngles;
-        angle = new Vector3(0,angle.y,0);
-        this.transform.eulerAngles = angle;
+       // Vector3 angle = transform.Find("Main Camera").transform.eulerAngles;
+      //  angle = new Vector3(0,angle.y,0);
+      //  this.transform.eulerAngles = angle;
         player_move();
         if (Input.GetButtonDown("Jump")){
             rig.AddForce(new Vector3(0f, jumpForce, 0f));
@@ -39,6 +47,13 @@ public class player : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Confined;
         }
+        playerEu = this.transform.eulerAngles;
+        playerEu.y += Input.GetAxis("Mouse X")*15;
+        cameraEu.x+= Input.GetAxis("Mouse Y") * -5;
+        cameraEu.x = Mathf.Clamp(cameraEu.x, -45, 45);
+        transform.eulerAngles = playerEu;
+        transform.Find("Main Camera").eulerAngles = cameraEu+ playerEu;
+        //   Input.GetAxis("Mouse Y");
     }
     float anger(float a)	//换算
     {
@@ -50,6 +65,14 @@ public class player : MonoBehaviour
     void player_move(){
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
+        bool hasHorizontalInput = !Mathf.Approximately(h, 0f);
+        bool hasVerticalInput = !Mathf.Approximately(v, 0f);
+        isWalking = hasHorizontalInput || hasVerticalInput;
+        if (isWalking&&gunController.Instance.isShoot)
+        {
+            m_Animator.SetBool("isRunAnim", true);
+        }
+        m_Animator.SetBool("isRun", isWalking);
         this.transform.Translate(new Vector3(h,0,v) * Time.deltaTime * speed,Space.Self);
     }
 }
